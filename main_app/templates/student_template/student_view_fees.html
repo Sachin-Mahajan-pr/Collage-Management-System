@@ -1,0 +1,80 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<section class="content text-white">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card card-dark shadow-2xl" style="border-radius: 20px; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header py-4 text-center" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); border-radius: 20px 20px 0 0;">
+                        <h3 class="card-title font-weight-bold w-100"><i class="fas fa-receipt mr-2"></i> FEE STRUCTURE</h3>
+                    </div>
+                    <div class="card-body p-4 text-center">
+                        {% for fee in fee_structures %}
+                        <div class="mb-4 p-3 shadow-inner" style="background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px dashed rgba(255,255,255,0.1);">
+                            <h5 class="text-white-50 small font-weight-bold mb-2">COURSE: {{ fee.course.name }}</h5>
+                            <h2 class="font-weight-bold" style="color: #10b981;">₹ {{ fee.amount }}</h2>
+                            <p class="mb-0 small text-white-50">{{ fee.description }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-white-50">No fee structure details found for your course.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card card-dark shadow-2xl" id="payment-status-card" style="border-radius: 20px; overflow: hidden; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header px-4 py-4" style="background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);">
+                        <h3 class="card-title font-weight-bold text-white"><i class="fas fa-file-invoice mr-2"></i> YOUR PAYMENT HISTORY</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" style="color: #cbd5e1; border: none;">
+                                <thead style="background: rgba(0,0,0,0.3); border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                    <tr>
+                                        <th class="border-0 px-4">#</th>
+                                        <th class="border-0">Fee Type</th>
+                                        <th class="border-0">Amount</th>
+                                        <th class="border-0">Payment status</th>
+                                        <th class="border-0 text-right px-4">Transaction Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for payment in payments %}
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s ease;">
+                                        <td class="px-4 font-weight-bold" style="color: #94a3b8;">{{ forloop.counter }}</td>
+                                        <td><span class="text-white font-weight-bold">Course Fee</span></td>
+                                        <td><span class="font-weight-bold" style="color: #f8fafc;">₹ {{ payment.fee_structure.amount }}</span></td>
+                                        <td>
+                                            {% if payment.is_paid %}
+                                            <span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="fas fa-check-circle mr-1"></i> PAID</span>
+                                            {% else %}
+                                            <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="fas fa-clock mr-1"></i> PENDING</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right px-4">{{ payment.payment_date|default:"-" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5 text-white-50">No payment history found</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .card { transition: transform 0.4s ease; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .card:hover { transform: translateY(-3px); }
+    .table-hover tbody tr:hover { background: rgba(255, 255, 255, 0.03) !important; cursor: pointer; }
+    .badge { font-weight: 600; letter-spacing: 0.5px; }
+</style>
+{% endblock content %}

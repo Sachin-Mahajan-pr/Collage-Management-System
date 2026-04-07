@@ -1,0 +1,123 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-lg" style="border-radius: 15px; border: none; overflow: hidden;">
+                    <div class="card-header bg-dark d-flex align-items-center justify-content-between">
+                        <h3 class="card-title font-weight-bold">{{page_title}}</h3>
+                        <button id="bulk-delete" class="btn btn-danger btn-sm ml-auto" style="border-radius: 20px; display: none;">
+                            <i class="fas fa-trash-alt mr-1"></i> Delete Selected
+                        </button>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example2" class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th><input type="checkbox" id="select-all"></th>
+                                    <th>#</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Course</th>
+                                    <th>Avatar</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td><input type="checkbox" class="user-checkbox" value="{{ student.id }}"></td>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{student.last_name}}, {{student.first_name}}</td>
+                                    <td>{{student.email}}</td>
+                                    <td>
+                                        {% if student.is_blocked %}
+                                        <span class="badge badge-danger">Blocked</span>
+                                        {% else %}
+                                        <span class="badge badge-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{student.student.course.name}}</td>
+                                    <td>
+                                        {% if student.profile_pic == ""  %}
+                                        No Image
+                                        {% else %}
+                                        <img class="img img-fluid rounded-circle" height="40" width="40"
+                                            src="{{student.profile_pic}}" alt="" style="object-fit: cover;">
+                                        {% endif %}
+                                    </td>
+                                    
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'edit_student' student.student.id %}" class="btn btn-sm btn-info shadow-sm" title="Edit"><i class="fas fa-edit"></i></a>
+                                            <a href="{% url 'block_unblock_user' student.id %}" class="btn btn-sm {% if student.is_blocked %}btn-success{% else %}btn-warning{% endif %} shadow-sm" title="{% if student.is_blocked %}Unblock{% else %}Block{% endif %}">
+                                                <i class="fas {% if student.is_blocked %}fa-user-check{% else %}fa-user-slash{% endif %}"></i>
+                                            </a>
+                                            <a href="{% url 'delete_student' student.student.id %}" class="btn btn-sm btn-danger shadow-sm" onclick="return confirm('Are you sure about this ?')" title="Delete"><i class="fas fa-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script>
+    $(document) .ready(function() {
+        $('#select-all').click(function() {
+            $('.user-checkbox').prop('checked', this.checked);
+            toggleBulkButton();
+        });
+
+        $('.user-checkbox').click(function() {
+            toggleBulkButton();
+        });
+
+        function toggleBulkButton() {
+            if ($('.user-checkbox:checked').length > 0) {
+                $('#bulk-delete').fadeIn();
+            } else {
+                $('#bulk-delete').fadeOut();
+            }
+        }
+
+        $('#bulk-delete').click(function() {
+            if (confirm('Delete all selected users?')) {
+                var userids = [];
+                $('.user-checkbox:checked').each(function() {
+                    userids.push($(this).val());
+                });
+
+                $.ajax({
+                    url: "{% url 'delete_user_bulk' %}",
+                    type: 'POST',
+                    data: {
+                        'user_ids[]': userids,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response) {
+                        if (response == "True") {
+                            location.reload();
+                        } else {
+                            alert('Failed to delete users');
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock content %}

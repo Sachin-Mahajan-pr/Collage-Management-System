@@ -1,0 +1,64 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark shadow-lg" style="border-radius: 15px; overflow: hidden; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);">
+                        <h3 class="card-title">{{page_title}}</h3>
+                        <div class="card-tools">
+                            <a href="{% url 'add_timetable' %}" class="btn btn-sm btn-light" style="border-radius: 20px; font-weight: 600;">
+                                <i class="fas fa-plus"></i> Add Time Table
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body table-responsive p-0">
+                        <table class="table table-hover text-nowrap" style="color: #fff;">
+                            <thead style="background: rgba(0,0,0,0.2);">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Subject</th>
+                                    <th>Faculty</th>
+                                    <th>Day</th>
+                                    <th>Timing</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for timetable in timetables %}
+                                <tr style="transition: all 0.3s ease;">
+                                    <td>{{ forloop.counter }}</td>
+                                    <td><span class="badge badge-info">{{ timetable.subject.name }}</span></td>
+                                    <td>{{ timetable.staff.admin.first_name }} {{ timetable.staff.admin.last_name }}</td>
+                                    <td>{{ timetable.day }}</td>
+                                    <td>{{ timetable.start_time }} - {{ timetable.end_time }}</td>
+                                    <td>
+                                        <a href="{% url 'edit_timetable' timetable.id %}" class="btn btn-sm btn-outline-primary" style="border-radius: 50%; width: 35px; height: 35px; padding: 5px;"><i class="fas fa-edit"></i></a>
+                                        <a href="{% url 'delete_timetable' timetable.id %}" onclick="return confirm('Delete this record?')" class="btn btn-sm btn-outline-danger" style="border-radius: 50%; width: 35px; height: 35px; padding: 5px;"><i class="fas fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">No Time Table Found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .card { transition: transform 0.3s ease; }
+    .card:hover { transform: translateY(-5px); }
+    .table-hover tbody tr:hover { background: rgba(255, 255, 255, 0.1) !important; cursor: pointer; }
+    .badge { padding: 8px 12px; border-radius: 20px; font-weight: 500; }
+</style>
+{% endblock content %}

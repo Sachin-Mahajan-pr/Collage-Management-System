@@ -1,0 +1,79 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark shadow-2xl" id="edit-timetable-card" style="border-radius: 20px; border: none; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header" style="background: linear-gradient(to right, #2563eb, #7c3aed); border-radius: 20px 20px 0 0;">
+                        <h3 class="card-title font-weight-bold text-white"><i class="fas fa-edit mr-2"></i> Edit Lecture Schedule</h3>
+                    </div>
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="card-body p-4">
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label class="text-white-50 small">SUBJECT</label>
+                                    <select name="subject" class="form-control select2 custom-input" required>
+                                        {% for subject in subjects %}
+                                        <option value="{{ subject.id }}" {% if subject.id == timetable.subject.id %}selected{% endif %}>{{ subject.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label class="text-white-50 small">FACULTY</label>
+                                    <select name="staff" class="form-control select2 custom-input" required>
+                                        {% for staff in staffs %}
+                                        <option value="{{ staff.id }}" {% if staff.id == timetable.staff.id %}selected{% endif %}>{{ staff.admin.first_name }} {{ staff.admin.last_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-4 form-group">
+                                    <label class="text-white-50 small">DAY</label>
+                                    <select name="day" class="form-control select2 custom-input" required>
+                                        <option value="Monday" {% if timetable.day == "Monday" %}selected{% endif %}>Monday</option>
+                                        <option value="Tuesday" {% if timetable.day == "Tuesday" %}selected{% endif %}>Tuesday</option>
+                                        <option value="Wednesday" {% if timetable.day == "Wednesday" %}selected{% endif %}>Wednesday</option>
+                                        <option value="Thursday" {% if timetable.day == "Thursday" %}selected{% endif %}>Thursday</option>
+                                        <option value="Friday" {% if timetable.day == "Friday" %}selected{% endif %}>Friday</option>
+                                        <option value="Saturday" {% if timetable.day == "Saturday" %}selected{% endif %}>Saturday</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label class="text-white-50 small">START TIME</label>
+                                    <input type="time" name="start_time" value="{{ timetable.start_time|time:'H:i' }}" class="form-control custom-input" required>
+                                </div>
+                                <div class="col-md-4 form-group">
+                                    <label class="text-white-50 small">END TIME</label>
+                                    <input type="time" name="end_time" value="{{ timetable.end_time|time:'H:i' }}" class="form-control custom-input" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent border-top border-white-10 d-flex justify-content-end p-4">
+                            <a href="{% url 'manage_timetable' %}" class="btn btn-outline-light px-4 py-2 font-weight-bold mr-3" style="border-radius: 30px; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s;">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 py-2 font-weight-bold shadow-lg" style="border-radius: 30px; background: #2563eb; border: none; transition: 0.3s transform;">
+                                <i class="fas fa-save mr-2"></i> Update Schedule
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .custom-input { background: rgba(51, 65, 85, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: #fff !important; border-radius: 12px; padding: 12px; }
+    .custom-input:focus { border-color: #3b82f6 !important; background: rgba(51, 65, 85, 0.7) !important; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+    #edit-timetable-card:hover { transform: scale(1.002); transition: 0.4s ease; }
+    label { letter-spacing: 1px; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+    .btn-primary:hover { transform: translateY(-3px) scale(1.05); background: #1d4ed8; }
+</style>
+{% endblock content %}

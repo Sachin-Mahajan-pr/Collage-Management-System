@@ -1,0 +1,64 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<section class="content text-white">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark shadow-2xl" id="staff-salary-card" style="border-radius: 20px; overflow: hidden; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header d-flex align-items-center justify-content-between px-4 py-4" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <h3 class="card-title font-weight-bold"><i class="fas fa-hand-holding-usd mr-2"></i> YOUR SALARY STATUS</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" style="color: #cbd5e1; border: none;">
+                                <thead style="background: rgba(0,0,0,0.3); border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                    <tr>
+                                        <th class="border-0 px-4">#</th>
+                                        <th class="border-0">Reference ID</th>
+                                        <th class="border-0">Base Amount</th>
+                                        <th class="border-0">Payment status</th>
+                                        <th class="border-0 text-right px-4">Disbursement Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for salary in salaries %}
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s ease;">
+                                        <td class="px-4 font-weight-bold" style="color: #94a3b8;">{{ forloop.counter }}</td>
+                                        <td><span class="text-white font-weight-bold small">SAL-{% if salary.id < 10 %}00{% elif salary.id < 100 %}0{% endif %}{{ salary.id }}</span></td>
+                                        <td><span class="font-weight-bold" style="color: #10b981;">₹ {{ salary.amount }}</span></td>
+                                        <td>
+                                            {% if salary.is_paid %}
+                                            <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="fas fa-check-circle mr-1"></i> PAID</span>
+                                            {% else %}
+                                            <span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="fas fa-history mr-1"></i> PENDING</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right px-4">{{ salary.payment_date|default:"-" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="text-white-50 opacity-50 mb-3"><i class="fas fa-receipt fa-3x"></i></div>
+                                            <p class="mb-0 text-white-50 font-italic">No salary records found for your account</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    #staff-salary-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); border-color: rgba(16, 185, 129, 0.4) !important; transition: all 0.4s ease; }
+    .table-hover tbody tr:hover { background: rgba(16, 185, 129, 0.05) !important; cursor: default; }
+    .badge { font-weight: 700; letter-spacing: 0.5px; }
+</style>
+{% endblock content %}

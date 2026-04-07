@@ -1,0 +1,69 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<section class="content text-white">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark shadow-2xl" style="border-radius: 20px; overflow: hidden; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header d-flex align-items-center justify-content-between px-4 py-3" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);">
+                        <h3 class="card-title font-weight-bold"><i class="fas fa-file-invoice-dollar mr-2"></i> Student Fee Payment status</h3>
+                        <div class="card-tools ml-auto">
+                            <span class="badge badge-pill badge-light px-3 py-2 font-weight-bold shadow-sm">Total Transactions: {{ payments.count }}</span>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" style="color: #cbd5e1;">
+                                <thead style="background: rgba(0,0,0,0.3); border-bottom: 2px solid rgba(255,255,255,0.05);">
+                                    <tr>
+                                        <th class="border-0 px-4">#</th>
+                                        <th class="border-0">Student Name</th>
+                                        <th class="border-0">Course</th>
+                                        <th class="border-0">Fee Amount</th>
+                                        <th class="border-0">Payment status</th>
+                                        <th class="border-0 text-right px-4">Paid Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for payment in payments %}
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s ease;">
+                                        <td class="px-4 font-weight-bold" style="color: #94a3b8;">{{ forloop.counter }}</td>
+                                        <td><span class="text-white font-weight-bold">{{ payment.student.admin.first_name }} {{ payment.student.admin.last_name }}</span><br><small class="text-white-50">{{ payment.student.admin.email }}</small></td>
+                                        <td><span class="badge badge-outline-light" style="border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 4px 12px; font-weight: 500; color: #e2e8f0;">{{ payment.student.course.name }}</span></td>
+                                        <td><span class="font-weight-bold" style="color: #f8fafc;">₹ {{ payment.fee_structure.amount }}</span></td>
+                                        <td>
+                                            {% if payment.is_paid %}
+                                            <a href="{% url 'toggle_fee_status' payment.id %}" class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="fas fa-check-circle mr-1"></i> PAID</a>
+                                            {% else %}
+                                            <a href="{% url 'toggle_fee_status' payment.id %}" class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="fas fa-clock mr-1"></i> PENDING</a>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right px-4">{{ payment.payment_date|default:"N/A" }}</td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-5">
+                                            <div class="text-white-50 opacity-50 mb-3"><i class="fas fa-folder-open fa-3x"></i></div>
+                                            <p class="mb-0">No payment records found</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .table-hover tbody tr:hover { background: rgba(255, 255, 255, 0.03) !important; cursor: default; }
+    .card { transition: transform 0.4s ease; }
+    .card:hover { transform: scale(1.005); }
+</style>
+{% endblock content %}

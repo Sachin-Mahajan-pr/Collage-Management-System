@@ -1,0 +1,59 @@
+{% extends 'main_app/base.html' %}
+{% load static %}
+{% block page_title %}{{page_title}}{% endblock page_title %}
+
+{% block content %}
+<section class="content text-white">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-dark shadow-2xl" style="border-radius: 20px; overflow: hidden; background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div class="card-header d-flex align-items-center justify-content-between px-4 py-3" style="background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);">
+                        <h3 class="card-title font-weight-bold"><i class="fas fa-calendar-day mr-2"></i> Your Lecture Schedule</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" style="color: #cbd5e1; border: none;">
+                                <thead style="background: rgba(0,0,0,0.3); border-bottom: 2px solid rgba(255,255,255,0.1);">
+                                    <tr>
+                                        <th class="border-0 px-4">#</th>
+                                        <th class="border-0">Subject Name</th>
+                                        <th class="border-0">Faculty / Teacher</th>
+                                        <th class="border-0">Day of Week</th>
+                                        <th class="border-0 text-right px-4">Class Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for timetable in timetables %}
+                                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s ease;">
+                                        <td class="px-4 font-weight-bold" style="color: #94a3b8;">{{ forloop.counter }}</td>
+                                        <td><span class="text-white font-weight-bold">{{ timetable.subject.name }}</span></td>
+                                        <td><span class="text-info font-weight-bold"><i class="fas fa-user-tie mr-1"></i> {{ timetable.staff.admin.first_name }} {{ timetable.staff.admin.last_name }}</span></td>
+                                        <td><span class="badge badge-outline-light px-3 py-2" style="border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; font-weight: 500;">{{ timetable.day }}</span></td>
+                                        <td class="text-right px-4"><span class="badge badge-indigo" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); border-radius: 20px; padding: 6px 14px;"><i class="far fa-clock mr-1"></i> {{ timetable.start_time }} - {{ timetable.end_time }}</span></td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="text-white-50 opacity-50 mb-3"><i class="far fa-calendar-times fa-3x"></i></div>
+                                            <p class="mb-0 text-white-50">No classes scheduled for your course yet</p>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .card { transition: transform 0.4s ease; }
+    .card:hover { transform: translateY(-5px); }
+    .table-hover tbody tr:hover { background: rgba(255, 255, 255, 0.03) !important; cursor: pointer; }
+    .badge { letter-spacing: 0.5px; font-weight: 600; }
+</style>
+{% endblock content %}
